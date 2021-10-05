@@ -45,7 +45,7 @@ LIB=$(GTK) $(MTH)
 ###############################################################################
 
 # Directorios con elementos de uso común
-COMMON=imprimir
+COMMON=imprimir structs
 
 # Directorios que serán compilados a un programa
 PROGRAMS=crms
