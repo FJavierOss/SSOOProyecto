@@ -11,6 +11,9 @@ FrameBitmap frameBitmapInit(){
 
 void frameBitmapChangeToOne(FrameBitmap fb, int pos)
 {   
+    if (pos > 127 || pos < 0){
+        return;
+    } 
     int row = pos / 8;
     int col = pos % 8;
     int numero = 1;
