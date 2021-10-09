@@ -3,11 +3,12 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <math.h>
-#include "../imprimir/imprimir.h"
-#include "../structs/bitmap.h"
+#include "crms_API.h"
 
 int main(int argc, char **argv)
 {
+  cr_mount(argv[1]);
+  printf("Ruta global: %s\n", ruta);
   printf("Primer print del proyecto 1\n");
   imprimir_desde_otro_archivo();
   FrameBitmap bitmap = frameBitmapInit();
