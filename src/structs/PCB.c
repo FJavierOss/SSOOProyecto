@@ -1,6 +1,5 @@
 #include "PCB.h"
-
-
+#include "byteswap.h"
 
 void openPCB( char* ruta){
   FILE * fp;
@@ -35,22 +34,43 @@ void openPCB( char* ruta){
       printf("%c", num);
     }
     printf(">\n");
+    
+    for (int e=0; e < 10 ;e++){
+        num=0;
+        fseek( fp,  256*k + 14 +21*e , SEEK_SET);
+        fread(&num, 1, 1, fp);
+        //printf("%d ", bswap_32(num));
+        
+        printf("Validez: %d ;",num);
+        printf("Nombre del archivo: ");
+        for (int i = 1 ; i < 13; i++){
+            fseek( fp, 256*k + 14 + 21*e + i, SEEK_SET);
+            fread(&num, 1, 1, fp);
+            //printf("%d ", bswap_32(num));
+            printf("%c", num);
+        /*
+        printf("location %d\n", i);
+        printf("result1: %d\n", bswap_32(num));
+        printf("result2: %d\n", num);
+        printf("-------\n");
+        */
+        }
+        printf("---Tamano del archivo: ");
+        
+        fseek( fp, 256*k + 14 + 21*e + 12 + 1, SEEK_SET);
+        fread(&num, 4, 1, fp);
+        //printf("%d ", bswap_32(num));
+        printf("%d bytes \n", bswap_32(num));   
 
+        printf("---Memoria Virtual: ");
+        
+        fseek( fp, 256*k + 14 + 21*e + 12 + 1 , SEEK_SET);
+        fread(&num, 4, 1, fp);
+        //printf("%d ", bswap_32(num));
+        printf("%d bytes \n", bswap_32(num));   
 
-
-
-
-    for (int i = 14; i < 256; i++){
-      fseek( fp, i + 256*k, SEEK_SET);
-      fread(&num, 1, 1, fp);
-      //printf("%d ", bswap_32(num));
-      printf("%c ", num);
-      /*
-      printf("location %d\n", i);
-      printf("result1: %d\n", bswap_32(num));
-      printf("result2: %d\n", num);
-      printf("-------\n");
-      */
+        printf("---Tabla de paginas: ");
+        
     }
     printf("\n");
   }

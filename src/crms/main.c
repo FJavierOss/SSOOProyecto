@@ -9,6 +9,8 @@ int main(int argc, char **argv)
 {
   int cr_int;
   cr_mount(argv[1]);
+
+  openPCB(ruta);
   //printf("Ruta global: %s\n", ruta);
   //openPCB(ruta);
   cr_ls_processes();
