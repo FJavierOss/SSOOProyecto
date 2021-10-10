@@ -142,3 +142,88 @@ int cr_exists(int process_id, char* file_name){
   }
   return check_existence;
 }
+
+void cr_start_process(int process_id, char* process_name){
+
+   FILE * fp;
+  fp = fopen(ruta, "rb+");
+ 
+  unsigned int aux=0;
+  unsigned int num = 0;
+  printf("%i \n",strlen(process_name));
+  char name[12];
+  
+
+  for(int k=0;k<16;k++){
+    
+    fseek(fp, 1+256*k, SEEK_SET);
+    fread(&num, 1, 1, fp);
+    
+    if (num==process_id){
+      printf("YA EXISTE ESTE ID \n");
+      return; 
+    }
+  };
+
+  for(int k=0;k<16;k++){
+    
+    fseek( fp, 256*k, SEEK_SET);
+    fread(&num, 1, 1, fp);
+   
+    if(num==0){ //No se está ejecutando el proceso asignado a ese espacio (si es que hay proceso)
+      
+      num=1;
+      //seteamos estado
+      fseek( fp, 256*k, SEEK_SET);
+      fwrite(&num, 1, 1, fp);
+      //seteamos id 
+      fseek( fp, 1+256*k, SEEK_SET);
+      fwrite(&process_id, 1, 1, fp);
+      //seteamos nombre
+      for (int j = 2; j < strlen(process_name)+2; j++){
+        fseek( fp, j+256*k, SEEK_SET);
+        fwrite(&process_name[j-2], 1, 1, fp);
+      }
+     
+      break;
+    }
+  };
+  fclose(fp);
+
+  printf("NO SE ENCONTRÖ UN ESPACIO PARA INICAR PROCESO\n");
+  return;  
+};
+
+
+void cr_finish_process(int process_id){
+
+   FILE * fp;
+  fp = fopen(ruta, "rb+");
+ 
+  unsigned int aux=0;
+  unsigned int num = 0;
+  char name[12];
+  
+  
+
+  for(int k=0;k<16;k++){
+    
+    fseek(fp, 1+256*k, SEEK_SET);
+    fread(&num, 1, 1, fp);
+    
+    if (num==process_id){
+      num=0;
+      
+      for(int m=0;m<256;m++){
+        fseek( fp, m+256*k, SEEK_SET);
+        fwrite(&num, 1, 1, fp);
+      }
+      printf("El proceso termino\n");
+      return; 
+    }
+  };
+  fclose(fp);
+  printf("No se encontró un proceso con ese id\n");
+  
+  return;  
+};

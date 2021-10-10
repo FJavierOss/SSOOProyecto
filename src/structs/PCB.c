@@ -29,6 +29,7 @@ void openPCB( char* ruta){
   //result = fread(&num, sizeof(int), 1, fp);
   //printf("Estado: %ld\n", result);
   for (int k = 0; k < 16; k++){
+    num=0;
     printf("\n Numero de entrada %d", k);
 
     fseek( fp, 256*k, SEEK_SET);
@@ -56,13 +57,13 @@ void openPCB( char* ruta){
         fread(&num, 1, 1, fp);
         //printf("%d ", bswap_32(num));
         
-        printf("Validez: %d ;",num);
-        printf("Nombre del archivo: ");
+        //printf("Validez: %d ;",num);
+        //printf("Nombre del archivo: ");
         for (int i = 1 ; i < 13; i++){
             fseek( fp, 256*k + 14 + 21*e + i, SEEK_SET);
             fread(&num, 1, 1, fp);
             //printf("%d ", bswap_32(num));
-            printf("%c", num);
+            //printf("%c", num);
         /*
         printf("location %d\n", i);
         printf("result1: %d\n", bswap_32(num));
@@ -70,19 +71,19 @@ void openPCB( char* ruta){
         printf("-------\n");
         */
         }
-        printf("---Tamano del archivo: ");
+        //printf("---Tamano del archivo: ");
         fseek( fp, 256*k + 14 + 21*e + 13, SEEK_SET);
         fread(&num, 4, 1, fp);
         //printf("%d ", bswap_32(num));
-        printf("%d bytes \n", bswap_32(num));
+        //printf("%d bytes \n", bswap_32(num));
 
-        printf("---Memoria Virtual: \n ");
+        //printf("---Memoria Virtual: \n ");
         fseek( fp, 256*k + 14 + 21*e + 13  + 4, SEEK_SET);
         fread(&num, 4, 1, fp);
         //printBits(sizeof(num), &num);
         aux = num >> 28;
         //printBits(sizeof(aux), &aux);
-        printf("bits no significativos: %d \n", (aux));
+        //printf("bits no significativos: %d \n", (aux));
 
         aux = num;
         for (int a = 29 ; a < 33; a++){
@@ -90,16 +91,30 @@ void openPCB( char* ruta){
         }
         aux = aux >> 23; // 28 - 23
         //printBits(sizeof(aux), &aux);
-        printf("VPN: %d \n", bswap_32(aux));
+        //printf("VPN: %d \n", bswap_32(aux));
 
          aux = num;
         for (int a = 23 ; a < 33; a++){
             aux = aux & (~(0x01<<(a))); 
         }
         //printBits(sizeof(aux), &aux);
-        printf("OFFSET: %d \n", bswap_32(aux));
-        printf("---Tabla de paginas: ");
-        
+        //printf("OFFSET: %d \n", bswap_32(aux));
+        //printf("---Tabla de paginas: ");
+        for (int s = 0 ; s < 32; s++){
+        fseek( fp, 256*k + 14 + 210 + 13  + 4 + 4 + s, SEEK_SET);
+        fread(&num, 1, 1, fp);
+        aux = num;
+        //printBits(sizeof(num), &num);
+        aux = num >> 7;
+        //printBits(sizeof(aux), &aux);
+        //printf("Validez Tabla de Paginas: %d \n", (aux));
+
+        aux = num;
+        aux = aux & (~(0x01<<(7))); 
+        //printBits(sizeof(aux), &aux);
+        //printf("PFN: %d \n", bswap_32(aux));
+        }
+
     }
     printf("\n");
   }
