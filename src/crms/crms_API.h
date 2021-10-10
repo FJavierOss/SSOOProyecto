@@ -1,5 +1,6 @@
 #include "../imprimir/imprimir.h"
 #include "../structs/bitmap.h"
+#include "../structs/PCB.h"
 #pragma once
 
 typedef struct crmsFile CrmsFile;

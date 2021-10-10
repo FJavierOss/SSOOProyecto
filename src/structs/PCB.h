@@ -3,12 +3,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <math.h>
+#include <stdio.h>
+#include <byteswap.h>
 #pragma once
 
+void openPCB(char* ruta);
+
+/*
 typedef struct pageTable
 {
   int data; //1 bit de validez y 7 bits de PFN
-  
+
 } PageTable;
 
 typedef struct subentrada
@@ -16,7 +21,7 @@ typedef struct subentrada
   int validez; // 1 byte
   char file_name[12]; // 12 bytes
   int file_size; //4 bytes
-  int virtual_adress; //4 bytes (4bits no significativos + 5 bits VPN +23 offset) 
+  int virtual_adress; //4 bytes (4bits no significativos + 5 bits VPN +23 offset)
 } SubEntrada;
 
 typedef struct entrada
@@ -37,3 +42,4 @@ TablePCB tablepcb_init();
 Entrada entrada_init();
 SubEntrada subentrada_init();
 PageTable pagetable_init();
+*/
