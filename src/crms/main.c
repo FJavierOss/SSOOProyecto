@@ -9,8 +9,15 @@ int main(int argc, char **argv)
 {
   int cr_int;
   cr_mount(argv[1]);
+
+  openPCB(ruta);
   //printf("Ruta global: %s\n", ruta);
   //openPCB(ruta);
+  cr_ls_processes();
+  cr_start_process(4,"mi pro");
+  
+  cr_ls_processes();
+  cr_finish_process(4);
   cr_ls_processes();
   cr_ls_files(27);
   cr_int = cr_exists(27, "grab.mp4");
