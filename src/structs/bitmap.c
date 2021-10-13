@@ -43,8 +43,7 @@ int checkPosStatusFB(int pos_to_check, char* ruta){
 }
 
 
-void frameBitmapChangeToOne(int pos_to_check, char* ruta)
-{
+void frameBitmapChangeToOne(int pos_to_check, char* ruta){
   if ((pos_to_check < 0) && (pos_to_check > 127)){
     printf("Posicion fuera de rango\n");
     return ;
@@ -84,8 +83,6 @@ void frameBitmapChangeToOne(int pos_to_check, char* ruta)
   printf("to one: %d\n", fb.data[row]);
   */
 }
-
-
 
 void frameBitmapChangeToZero(int pos_to_check, char* ruta){
   if ((pos_to_check < 0) && (pos_to_check > 127)){
