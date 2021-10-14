@@ -5,6 +5,17 @@
 
 typedef struct crmsFile CrmsFile;
 
+struct crmsFile
+{
+  int proces_id;
+  char* file_name;
+  int size;
+  int valid;
+  int virtual_address;
+  int page_table;
+  int offset;
+};
+
 char* ruta;
 
 void cr_mount(char* memory_path);

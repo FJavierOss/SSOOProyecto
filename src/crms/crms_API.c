@@ -227,3 +227,113 @@ void cr_finish_process(int process_id){
   
   return;  
 };
+
+CrmsFile* cr_open(int process_id, char* file_name, char mode)
+{
+  FILE* fp;
+  CrmsFile* crms_file = malloc(sizeof(CrmsFile));
+  char name[12];
+  int num = 0;
+  int direccion_virtual;
+  int tamano;
+  if (mode == 'r')
+  {
+    fp = fopen(ruta, "rb+");
+
+    for (int k = 0; k < 16; k++)
+    {
+      fseek( fp, 256*k, SEEK_SET);
+      fread(&num, 1, 1, fp);
+
+      // Aqui podriamos chequear esta vivo o no. (num  == 1)
+      // Hay que preguntar al ayudante si procesos con
+      // status 0 se incluyen dentro de la operacion
+      if( 1 )
+      {
+        fseek( fp, 1+256*k, SEEK_SET);
+        fread(&num, 1, 1, fp);
+        if(num == process_id)
+        {
+
+          // Hay 10 entradas cada 1 con 21 bytes
+          for (int j = 0; j < 10; j++)
+          {
+            fseek( fp, 21*j+14+256*k, SEEK_SET);
+            fread(&num, 1, 1, fp);
+            if (num == 1)
+            {
+
+              for (int i = 1; i<13; i++){
+                fseek( fp, 21*j+i+14+256*k, SEEK_SET);
+                fread(&num, 1, 1, fp);
+                name[i-1] = num;
+              }
+              if (!strcmp(name, file_name))
+              {
+                printf("%s\n", name);
+                fseek(fp, 21*j+13+14+256*k, SEEK_SET);
+                fread(&num, 4, 1, fp);
+                
+                tamano = bswap_32(num);
+                fseek(fp, 21*j+17+14+256*k, SEEK_SET);
+                fread(&num, 4, 1, fp);
+                
+                direccion_virtual = bswap_32(num);
+                
+                int offset = (direccion_virtual << 9) >> 9;
+                int VPN = direccion_virtual >> 23;
+                printf("Tamaño: %i\n", tamano);
+                printf("Dirección virtual: %i\n", direccion_virtual);                
+                printf("Offset: %i\n", offset);
+                printf("VPN: %i\n", VPN);
+                fseek(fp, 256-32+256*k+VPN, SEEK_SET);
+                fread(&num, 1, 1, fp);
+                printf("Nume 1 bite: %i\n", num);
+                unsigned int pagina = num;
+                unsigned int bit_validez_pagina = pagina >> 7;
+                unsigned int PFN = (pagina & ~(0x01 << 7));
+                printf("Página: %d\n", pagina);
+                printf("Bit de validez de la página: %d\n", bit_validez_pagina);
+                printf("PFN: %d\n", PFN);
+
+
+              }
+              
+            }
+
+          }
+        }
+      }
+    }
+    
+
+    
+
+
+    return crms_file;
+  }
+  else if (mode == 'w')
+  {
+    if (!cr_exists(process_id, file_name))
+    {
+      crms_file -> file_name = file_name;
+      crms_file -> proces_id = process_id;
+      // fatla ver qué atributos faltan
+      return crms_file;
+    }
+    else 
+    {
+      printf("El archivo ya existe\n");
+      free(crms_file);
+      return NULL;
+      
+    }
+  }
+  else
+  {
+    printf("Modo inválido\n");
+    free(crms_file);
+    return NULL;
+  }
+}
+
