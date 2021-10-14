@@ -1,16 +1,13 @@
 #include "crms_API.h"
 
-
-void cr_mount(char* memory_path)
-{
+void cr_mount(char* memory_path){
   ruta = memory_path;
 }
-
 
 void cr_ls_processes(){
   int num = 0;
   char name[12];
-  FILE * fp;
+  FILE *fp;
   fp = fopen(ruta, "rb+");
   printf("      Running Processes      \n");
 
@@ -41,7 +38,7 @@ void cr_ls_processes(){
 void cr_ls_files(int process_id){
   int num = 0;
   int process_exists = 0;
-  FILE * fp;
+  FILE *fp;
   fp = fopen(ruta, "rb+");
 
   for (int k = 0; k < 16; k++){
@@ -85,13 +82,12 @@ void cr_ls_files(int process_id){
   }
 }
 
-
 int cr_exists(int process_id, char* file_name){
   int num = 0;
   char name[12];
   int check_existence = 0;
   int process_exists = 0;
-  FILE * fp;
+  FILE *fp;
   fp = fopen(ruta, "rb+");
 
   for (int k = 0; k < 16; k++){
@@ -145,7 +141,7 @@ int cr_exists(int process_id, char* file_name){
 
 void cr_start_process(int process_id, char* process_name){
 
-   FILE * fp;
+   FILE *fp;
   fp = fopen(ruta, "rb+");
  
   unsigned int aux=0;
@@ -161,6 +157,7 @@ void cr_start_process(int process_id, char* process_name){
     
     if (num==process_id){
       printf("YA EXISTE ESTE ID \n");
+      fclose(fp);
       return; 
     }
   };
@@ -194,36 +191,82 @@ void cr_start_process(int process_id, char* process_name){
   return;  
 };
 
-
 void cr_finish_process(int process_id){
 
-   FILE * fp;
+  FILE *fp;
   fp = fopen(ruta, "rb+");
- 
+  unsigned int zero=0;
   unsigned int aux=0;
   unsigned int num = 0;
   char name[12];
-  
+  unsigned int status =0;
   
 
   for(int k=0;k<16;k++){
     
     fseek(fp, 1+256*k, SEEK_SET);
     fread(&num, 1, 1, fp);
+
+    fseek(fp, 256*k, SEEK_SET);
+    fread(&status, 1, 1, fp);
     
-    if (num==process_id){
+    if (num==process_id && status==1){ //Se encontró el process id
+      num=0;  
+      for (int e=0; e < 10 ;e++){
+        printf("---Memoria Virtual: \n ");
+        fseek( fp, 256*k + 14 + 21*e + 13  + 4, SEEK_SET);
+        fread(&num, 4, 1, fp);
+        //printBits(sizeof(num), &num);
+        aux = num >> 28;
+        //printBits(sizeof(aux), &aux);
+        //printf("bits no significativos: %d \n", (aux));
+
+        aux = num;
+        for (int a = 28 ; a < 33; a++){
+            aux = aux & (~(0x01<<(a))); 
+        }
+        aux = aux >> 23; // 28 - 23
+        printBits(sizeof(aux), &aux);
+        printf("VPN: %d \n", aux);
+        num=0;
+        printf("EL INDICE QUE BUSCAREMOS ES : %i \n",256*k + 14 + 210 + aux);
+        fseek( fp, 256*k + 14 + 210  + aux, SEEK_SET);
+        
+        fread(&num, 1, 1, fp);
+        aux = num;
+        printBits(sizeof(num), &num);
+        aux = num >> 7;
+        printBits(sizeof(aux), &aux);
+        printf("Validez Tabla de Paginas: %d \n", (aux));
+
+        aux = num;
+        printBits(sizeof(aux), &aux);
+        aux = aux & (~(0x01<<(7))); 
+        printBits(sizeof(aux), &aux);
+        printf("PFN: %d \n", aux);
+        for(int m=0;m<16;m++){                       
+          fseek( fp, 4096+m , SEEK_SET);
+          fread(&num, 1, 1, fp);
+          printBits(sizeof(num), &num);
+        }
+        frameBitmapChangeToZero(aux,ruta);
+        for(int m=0;m<16;m++){
+          fseek( fp, 4096+m , SEEK_SET);
+          fread(&num, 1, 1, fp);
+          printBits(sizeof(num), &num);
+          }
+      }
       num=0;
-      
       for(int m=0;m<256;m++){
         fseek( fp, m+256*k, SEEK_SET);
-        fwrite(&num, 1, 1, fp);
+        fwrite(&zero, 1, 1, fp);
       }
       printf("El proceso termino\n");
+      fclose(fp);
       return; 
     }
   };
   fclose(fp);
-  printf("No se encontró un proceso con ese id\n");
   
-  return;  
+  printf("No se encontró un proceso con ese id\n");
 };

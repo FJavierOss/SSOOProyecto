@@ -86,7 +86,7 @@ void openPCB( char* ruta){
         //printf("bits no significativos: %d \n", (aux));
 
         aux = num;
-        for (int a = 29 ; a < 33; a++){
+        for (int a = 28 ; a < 33; a++){
             aux = aux & (~(0x01<<(a))); 
         }
         aux = aux >> 23; // 28 - 23
@@ -101,7 +101,7 @@ void openPCB( char* ruta){
         //printf("OFFSET: %d \n", bswap_32(aux));
         //printf("---Tabla de paginas: ");
         for (int s = 0 ; s < 32; s++){
-        fseek( fp, 256*k + 14 + 210 + 13  + 4 + 4 + s, SEEK_SET);
+        fseek( fp, 256*k + 14 + 210 +  s, SEEK_SET);
         fread(&num, 1, 1, fp);
         aux = num;
         //printBits(sizeof(num), &num);

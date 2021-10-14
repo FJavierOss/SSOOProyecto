@@ -1,7 +1,5 @@
 #include "bitmap.h"
 
-
-
 int checkPosStatusFB(int pos_to_check, char* ruta){
   // Aqui podriamos hacer uso del bonus lanzando un error
   if ((pos_to_check < 0) && (pos_to_check > 127)){
@@ -42,16 +40,14 @@ int checkPosStatusFB(int pos_to_check, char* ruta){
   return(num);
 }
 
-
-void frameBitmapChangeToOne(int pos_to_check, char* ruta)
-{
+void frameBitmapChangeToOne(int pos_to_check, char* ruta){
   if ((pos_to_check < 0) && (pos_to_check > 127)){
     printf("Posicion fuera de rango\n");
     return ;
   }
 
   int row = pos_to_check / 8;
-  int col = pos_to_check % 8;
+  int col = 7 - pos_to_check % 8;
   FILE * fp;
   int num = 0;
   int bit = 1;
@@ -85,24 +81,22 @@ void frameBitmapChangeToOne(int pos_to_check, char* ruta)
   */
 }
 
-
-
 void frameBitmapChangeToZero(int pos_to_check, char* ruta){
-  if ((pos_to_check < 0) && (pos_to_check > 127)){
+  if ((pos_to_check < 0) || (pos_to_check > 127)){
     printf("Posicion fuera de rango\n");
     return ;
   }
 
   int row = pos_to_check / 8;
-  int col = pos_to_check % 8;
+  int col = 7 - pos_to_check % 8;
   FILE * fp;
   int num = 0;
   int bit = 1;
   fp = fopen(ruta, "rb+");
 
-  fseek( fp, 4096 + row, SEEK_SET);
+  fseek( fp, 4096 + row, SEEK_SET);           
   fread(&num, 1, 1, fp);
-  bit = ~(bit << col);
+  bit = ~(bit << col);                    
   num = num & bit;
   fseek( fp, 4096 + row, SEEK_SET);
   fwrite(&num, 1, 1, fp);
