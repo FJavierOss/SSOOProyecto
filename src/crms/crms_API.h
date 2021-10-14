@@ -10,10 +10,13 @@ struct crmsFile
   int proces_id;
   char* file_name;
   int size;
-  int valid;
   int virtual_address;
   int page_table;
   int offset;
+  int fisic_address;
+  char* content;
+  int VPN;
+  int PFN;
 };
 
 char* ruta;

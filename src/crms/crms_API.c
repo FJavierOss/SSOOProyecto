@@ -236,6 +236,11 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
   int num = 0;
   int direccion_virtual;
   int tamano;
+  unsigned int pagina;
+  unsigned int bit_validez_pagina;
+  unsigned int PFN;
+  int memoria_fisica;
+  int memoria_fisica_abosluta;
   if (mode == 'r')
   {
     fp = fopen(ruta, "rb+");
@@ -275,26 +280,43 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
                 fread(&num, 4, 1, fp);
                 
                 tamano = bswap_32(num);
+                
                 fseek(fp, 21*j+17+14+256*k, SEEK_SET);
                 fread(&num, 4, 1, fp);
                 
                 direccion_virtual = bswap_32(num);
-                
                 int offset = (direccion_virtual << 9) >> 9;
                 int VPN = direccion_virtual >> 23;
-                printf("Tamaño: %i\n", tamano);
-                printf("Dirección virtual: %i\n", direccion_virtual);                
-                printf("Offset: %i\n", offset);
-                printf("VPN: %i\n", VPN);
-                fseek(fp, 256-32+256*k+VPN, SEEK_SET);
+
+                fseek(fp, 224+256*k+VPN, SEEK_SET);
+                num = 0;
                 fread(&num, 1, 1, fp);
-                printf("Nume 1 bite: %i\n", num);
-                unsigned int pagina = num;
-                unsigned int bit_validez_pagina = pagina >> 7;
-                unsigned int PFN = (pagina & ~(0x01 << 7));
-                printf("Página: %d\n", pagina);
-                printf("Bit de validez de la página: %d\n", bit_validez_pagina);
-                printf("PFN: %d\n", PFN);
+                pagina = num;
+                bit_validez_pagina = pagina >> 7;
+                PFN = (pagina & ~(0x01 << 7));
+                memoria_fisica = (PFN << 23) | offset;
+                memoria_fisica_abosluta = memoria_fisica + pow(2, 12) + pow(2, 4);
+
+                
+                crms_file -> size = tamano;
+                crms_file -> virtual_address = direccion_virtual;
+                crms_file -> offset = offset;
+                crms_file -> VPN = VPN;
+                crms_file -> PFN = PFN;
+                crms_file -> fisic_address = memoria_fisica;
+                crms_file -> proces_id = process_id;
+                crms_file -> file_name = file_name;
+                crms_file -> page_table = pagina;
+                crms_file -> content = calloc(sizeof(char), crms_file -> size);
+                for (int z = 0; z< crms_file -> size; z++)
+                {
+                  fseek(fp, memoria_fisica_abosluta + z, SEEK_SET);
+                  num = 0;
+                  fread(&num, 1, 1, fp);
+                  crms_file -> content[z] = num;
+                  
+                }
+                printf("Contenido gigante: %s\n", crms_file->content);
 
 
               }
@@ -305,11 +327,7 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
         }
       }
     }
-    
-
-    
-
-
+    fclose(fp);
     return crms_file;
   }
   else if (mode == 'w')
@@ -318,6 +336,15 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
     {
       crms_file -> file_name = file_name;
       crms_file -> proces_id = process_id;
+      crms_file -> size = NULL;
+      crms_file -> virtual_address = NULL;
+      crms_file -> offset = NULL;
+      crms_file -> VPN = NULL;
+      crms_file -> PFN = NULL;
+      crms_file -> fisic_address = NULL;
+      crms_file -> proces_id = NULL;
+      crms_file -> file_name = NULL;
+      crms_file -> page_table = NULL;
       // fatla ver qué atributos faltan
       return crms_file;
     }
@@ -337,3 +364,17 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
   }
 }
 
+int cr_write_file(CrmsFile* file_desc, void* buffer, int n_bytes)
+{
+  FILE* fp;
+  fopen(fp, "wb+");;
+  int PFN;
+  
+}
+
+
+void cr_close(CrmsFile* file_desc)
+{
+  free(file_desc -> content);
+  free(file_desc);
+}
