@@ -63,10 +63,10 @@ void frameBitmapChangeToOne(int pos_to_check, char* ruta){
   //num = num >> col;
 
   for (int i = 0; i < 8; i++) {
-    printf("%i ", num & 0x01);
+    //printf("%i ", num & 0x01);
     num = num >> 1;
   }
-  printf("\n");
+  //printf("\n");
 
 
   //printf("pos %i status %i\n", pos_to_check, num & 0x01);
@@ -104,10 +104,10 @@ void frameBitmapChangeToZero(int pos_to_check, char* ruta){
   //num = num >> col;
 
   for (int i = 0; i < 8; i++) {
-    printf("%i ", num & 0x01);
+    //printf("%i ", num & 0x01);
     num = num >> 1;
   }
-  printf("\n");
+  //printf("\n");
 
 
   //printf("pos %i status %i\n", pos_to_check, num & 0x01);

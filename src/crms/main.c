@@ -8,8 +8,56 @@
 int main(int argc, char **argv)
 {
   int cr_int;
-  cr_mount(argv[1]);
 
+
+
+  //Inputs para tests
+  int testInteger;
+  int processId;
+  char filename[12];
+  printf("1 para revisar cr_mount y cr_ls_processes \n");
+  printf("2 para revisar cr_ls_files y cr_exists \n ");
+  printf("3 para revisar cr_start_process y cr_finish_process\n ");
+  printf("4 para revisar cr_open \n ");
+  printf("Ingresa un integer: ");
+  scanf("%d", &testInteger);  
+
+
+
+  if(testInteger==1){
+    cr_ls_processes();
+    printf("===========Ahora se montará la memoria=============\n");
+    cr_mount(argv[1]);
+    cr_ls_processes();
+    return 1;
+  } else if(testInteger==2){
+    cr_mount(argv[1]);
+    cr_ls_processes();
+    printf("Ingresa un ProcessId: ");
+    scanf("%d", &processId);  
+    cr_ls_files(processId);
+    printf("Ingresa un FileName: ");
+    gets(filename);
+    scanf("%s", &filename); 
+    printf("Retorno de cr_exists: %i\n",cr_exists(processId,filename));
+    return 1;
+  } else if(testInteger==3){
+    cr_mount(argv[1]);
+    cr_ls_processes();
+    printf("Ingresa un ProcessId para iniciar un proceso: ");
+    scanf("%d", &processId); 
+    printf("Ingresa un nombre para este proceso: ");
+    gets(filename);
+    scanf("%s", &filename); 
+    cr_start_process(processId,filename);
+    cr_ls_processes();
+    printf("Ingresa un ProcessId para finalizar un proceso: ");
+    scanf("%d", &processId); 
+    cr_finish_process(processId);
+    cr_ls_processes();
+    return 1;
+  }
+  
   printf("----\n");
 
 
@@ -53,7 +101,7 @@ int main(int argc, char **argv)
   cr_start_process(4,"mi pro");
 
   cr_ls_processes();
-  cr_finish_process(0);
+  cr_finish_process(200);
   cr_ls_processes();
   cr_ls_files(27);
   cr_int = cr_exists(27, "grab.mp4");

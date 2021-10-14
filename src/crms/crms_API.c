@@ -7,6 +7,10 @@ void cr_mount(char* memory_path){
 void cr_ls_processes(){
   int num = 0;
   char name[12];
+  if(!ruta) {
+    printf("No hay memoria montada!\n");
+    return;
+  }
   FILE *fp;
   fp = fopen(ruta, "rb+");
   printf("      Running Processes      \n");
@@ -136,17 +140,22 @@ int cr_exists(int process_id, char* file_name){
     printf("No hay procesos con ese id\n");
     return 0;
   }
+  //
+  if (!check_existence){
+    printf("No hay archivo con ese nombre asociado a ese proceso\n");
+    return 0;
+  }
+  //
   return check_existence;
 }
 
 void cr_start_process(int process_id, char* process_name){
 
-   FILE *fp;
+  FILE *fp;
   fp = fopen(ruta, "rb+");
  
   unsigned int aux=0;
-  unsigned int num = 0;
-  printf("%i \n",strlen(process_name));
+  unsigned int num = 0;  
   char name[12];
   
 
@@ -184,10 +193,14 @@ void cr_start_process(int process_id, char* process_name){
      
       break;
     }
+
+    if (k == 15) {
+      printf("No hay espacio disponible para iniciar el proceso!\n");
+    }
   };
   fclose(fp);
 
-  printf("NO SE ENCONTRÖ UN ESPACIO PARA INICAR PROCESO\n");
+  
   return;  
 };
 
@@ -213,7 +226,7 @@ void cr_finish_process(int process_id){
     if (num==process_id && status==1){ //Se encontró el process id
       num=0;  
       for (int e=0; e < 10 ;e++){
-        printf("---Memoria Virtual: \n ");
+        //printf("---Memoria Virtual: \n ");
         fseek( fp, 256*k + 14 + 21*e + 13  + 4, SEEK_SET);
         fread(&num, 4, 1, fp);
         //printBits(sizeof(num), &num);
@@ -226,34 +239,34 @@ void cr_finish_process(int process_id){
             aux = aux & (~(0x01<<(a))); 
         }
         aux = aux >> 23; // 28 - 23
-        printBits(sizeof(aux), &aux);
-        printf("VPN: %d \n", aux);
+        //printBits(sizeof(aux), &aux);
+        //printf("VPN: %d \n", aux);
         num=0;
-        printf("EL INDICE QUE BUSCAREMOS ES : %i \n",256*k + 14 + 210 + aux);
+        //printf("EL INDICE QUE BUSCAREMOS ES : %i \n",256*k + 14 + 210 + aux);
         fseek( fp, 256*k + 14 + 210  + aux, SEEK_SET);
         
         fread(&num, 1, 1, fp);
         aux = num;
-        printBits(sizeof(num), &num);
+        //printBits(sizeof(num), &num);
         aux = num >> 7;
-        printBits(sizeof(aux), &aux);
-        printf("Validez Tabla de Paginas: %d \n", (aux));
+        //printBits(sizeof(aux), &aux);
+        //printf("Validez Tabla de Paginas: %d \n", (aux));
 
         aux = num;
-        printBits(sizeof(aux), &aux);
+        //printBits(sizeof(aux), &aux);
         aux = aux & (~(0x01<<(7))); 
-        printBits(sizeof(aux), &aux);
-        printf("PFN: %d \n", aux);
+        //printBits(sizeof(aux), &aux);
+        //printf("PFN: %d \n", aux);
         for(int m=0;m<16;m++){                       
           fseek( fp, 4096+m , SEEK_SET);
           fread(&num, 1, 1, fp);
-          printBits(sizeof(num), &num);
+          //printBits(sizeof(num), &num);
         }
         frameBitmapChangeToZero(aux,ruta);
         for(int m=0;m<16;m++){
           fseek( fp, 4096+m , SEEK_SET);
           fread(&num, 1, 1, fp);
-          printBits(sizeof(num), &num);
+          // printBits(sizeof(num), &num);
           }
       }
       num=0;
