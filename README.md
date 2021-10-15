@@ -1,6 +1,6 @@
 # Descripcion General de del proyecto
 
-##Integrantes 
+## Integrantes 
 
 - Ignacio Zuñiga : 17640008
 - Francisco Ossandon: 14635186
