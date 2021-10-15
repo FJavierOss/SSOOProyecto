@@ -21,17 +21,8 @@ int main(int argc, char **argv)
   int testInteger;
   int processId;
   char filename[12];
-  cr_mount(argv[1]);
-  unsigned char buffer[64];
 
-  CrmsFile* crms_w = cr_open(0, "message.txt", 'w');
-  printf("NOmbre: %s\n", crms_w -> file_name);
-  FILE* fp;
-  fp = fopen("info.txt", "rb+");
-  fseek(fp, 0, SEEK_SET);
-  fread(buffer, 1, 32, fp);
-  fclose(fp);
-  int bytes_escritos = cr_write_file(crms_w, buffer, 32);
+  
   printf("1 para revisar cr_mount y cr_ls_processes \n");
   printf("2 para revisar cr_ls_files y cr_exists \n ");
   printf("3 para revisar cr_start_process y cr_finish_process\n ");
@@ -148,11 +139,11 @@ int main(int argc, char **argv)
   // int bytes_escritos2 = cr_write_file(crms_w2, buffer, 64);
   
 
-  // // CrmsFile* crms_r = cr_open(0, "info.txt", 'r');
-  // // int bytes_r = cr_read(crms_r, buffer, 32);
-  // // printf("Pointer: %p\n", buffer);
-  // // printf("info: %s\n", buffer);
-  // // cr_ls_files(0);
+  // CrmsFile* crms_r = cr_open(0, "info.txt", 'r');
+  // int bytes_r = cr_read(crms_r, buffer, 32);
+  // printf("Pointer: %p\n", buffer);
+  // printf("info: %s\n", buffer);
+  // cr_ls_files(0);
   // cr_delete_file(crms_r);
   // cr_close(crms_r);
   // if (!cr_exists(0, "info.txt"))
