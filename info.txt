@@ -1,0 +1,2 @@
+Primera linea que quiero escribir en memoria principal
+segunda línea que quiero escribir en memora.
