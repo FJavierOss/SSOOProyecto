@@ -111,8 +111,8 @@ void openPCB( char* ruta){
 
         aux = num;
         aux = aux & (~(0x01<<(7))); 
-        //printBits(sizeof(aux), &aux);
-        //printf("PFN: %d \n", bswap_32(aux));
+        printBits(sizeof(aux), &aux);
+        printf("PFN: %d \n", bswap_32(aux));
         }
 
     }
