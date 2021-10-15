@@ -161,7 +161,7 @@ void cr_start_process(int process_id, char* process_name){
 
   FILE *fp;
   fp = fopen(ruta, "rb+");
- 
+ unsigned int status =0;
   unsigned int aux=0;
   unsigned int num = 0;  
   char name[12];
@@ -171,8 +171,9 @@ void cr_start_process(int process_id, char* process_name){
     
     fseek(fp, 1+256*k, SEEK_SET);
     fread(&num, 1, 1, fp);
-    
-    if (num==process_id){
+    fseek(fp, 256*k, SEEK_SET);
+    fread(&status, 1, 1, fp);
+    if (num==process_id && status==1 ){
       printf("YA EXISTE ESTE ID \n");
       fclose(fp);
       return; 
