@@ -15,14 +15,14 @@ int main(int argc, char **argv)
   int testInteger;
   int processId;
   char filename[12];
+
+  
   printf("1 para revisar cr_mount y cr_ls_processes \n");
   printf("2 para revisar cr_ls_files y cr_exists \n ");
   printf("3 para revisar cr_start_process y cr_finish_process\n ");
   printf("4 para revisar cr_open \n ");
   printf("Ingresa un integer: ");
   scanf("%d", &testInteger);  
-
-
 
   if(testInteger==1){
     cr_ls_processes();
