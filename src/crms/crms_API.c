@@ -324,6 +324,7 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
   unsigned int pagina;
   unsigned int bit_validez_pagina;
   unsigned int PFN;
+  unsigned int status;
   int memoria_fisica;
   int memoria_fisica_abosluta;
   if (mode == 'r')
@@ -342,7 +343,10 @@ CrmsFile* cr_open(int process_id, char* file_name, char mode)
       {
         fseek( fp, 1+256*k, SEEK_SET);
         fread(&num, 1, 1, fp);
-        if(num == process_id)
+
+        fseek(fp, 256*k, SEEK_SET);
+        fread(&status, 1, 1, fp);
+        if(num == process_id && status==1 )
         {
           // Hay 10 entradas cada 1 con 21 bytes
           for (int j = 0; j < 10; j++)
